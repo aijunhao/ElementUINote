@@ -45,6 +45,7 @@
         active: false,
         ready: false,
         inStage: false,
+        // 是否正在动画
         animating: false
       };
     },
@@ -81,9 +82,9 @@
 
       /**
        * 子组件偏移
-       * index: 当前索引
+       * index: 当前项索引，遍历 items 数组得来
        * activeIndex: 激活的索引
-       * oldIndex: 老的索引
+       * oldIndex: 即将取消激活的索引
        */
       translateItem(index, activeIndex, oldIndex) {
         // 轮播图类型：默认/card
@@ -92,6 +93,7 @@
         const parentDirection = this.parentDirection;
         const length = this.$parent.items.length;
         if (parentType !== 'card' && oldIndex !== undefined) {
+          // 如果当前的索引等于已激活的索引或者即将取消激活的索引，那么被认定为正在动画中
           this.animating = index === activeIndex || index === oldIndex;
         }
         if (index !== activeIndex && length > 2 && this.$parent.loop) {
