@@ -11,11 +11,14 @@
     }"
     @click="handleItemClick"
     :style="itemStyle">
+    <!-- card 类型 -->
     <div
       v-if="$parent.type === 'card'"
       v-show="!active"
       class="el-carousel__mask">
     </div>
+
+    <!-- 插槽 -->
     <slot></slot>
   </div>
 </template>
@@ -76,8 +79,16 @@
         return distance * (index - activeIndex);
       },
 
+      /**
+       * 子组件偏移
+       * index: 当前索引
+       * activeIndex: 激活的索引
+       * oldIndex: 老的索引
+       */
       translateItem(index, activeIndex, oldIndex) {
+        // 轮播图类型：默认/card
         const parentType = this.$parent.type;
+        // 轮播放向
         const parentDirection = this.parentDirection;
         const length = this.$parent.items.length;
         if (parentType !== 'card' && oldIndex !== undefined) {

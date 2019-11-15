@@ -4,13 +4,13 @@
     @mouseenter.stop="handleMouseEnter"
     @mouseleave.stop="handleMouseLeave">
 
-    <!-- 切换按钮及主要内容 -->
+    <!-- 切换按钮及轮播内容，轮播图主体内容 -->
     <div
       class="el-carousel__container"
       :style="{ height: height }">
 
       <!-- 
-        详情 1：左右切换箭头按钮
+        左右切换箭头按钮
         1. 添加了动画
         2. 按钮中 v-show 设置显示时机。
         3. @mouseenter 是鼠标进入按钮事件 handleButtonEnter()
@@ -44,12 +44,12 @@
         </button>
       </transition>
 
-      <!-- 这个插槽是给 carousel-item 子项用的 -->
+      <!-- carousel-item 子组件插槽 -->
       <slot></slot>
     </div>
 
     <!-- 
-      详情 2：指示器
+      指示器
       1. indicatorPosition 指示器位置
       2. @mouseenter 是鼠标进入事件 throttledIndicatorHover() 节流方法
     -->
@@ -198,6 +198,7 @@ export default {
     // 激活的 index 索引
     activeIndex(val, oldVal) {
       this.resetItemPosition(oldVal);
+      // 发送change事件
       if (oldVal > -1) {
         this.$emit('change', val, oldVal);
       }
@@ -262,7 +263,6 @@ export default {
       // 垂直无效
       if (this.direction === 'vertical') return;
       this.items.forEach((item, index) => {
-        console.log('inStage', item.inStage, 'active', item.active);
         if (arrow === this.itemInStage(item, index)) {
           item.hover = true;
         }
@@ -329,7 +329,7 @@ export default {
      * index: 索引
      */
     setActiveItem(index) {
-      // 字符串处理
+      // 字符串处理，如果索引是字符串，说明是指定名字的
       if (typeof index === 'string') {
         const filteredItems = this.items.filter(item => item.name === index);
         if (filteredItems.length > 0) {
@@ -367,10 +367,16 @@ export default {
       this.setActiveItem(this.activeIndex + 1);
     },
 
+    /**
+     * 指示器点击事件
+     */
     handleIndicatorClick(index) {
       this.activeIndex = index;
     },
 
+    /**
+     * 指示器鼠标悬浮事件
+     */
     handleIndicatorHover(index) {
       if (this.trigger === 'hover' && index !== this.activeIndex) {
         this.activeIndex = index;
@@ -390,9 +396,12 @@ export default {
   },
 
   mounted() {
+    console.log(this);
     this.updateItems();
     this.$nextTick(() => {
+      // 添加尺寸更新监听
       addResizeListener(this.$el, this.resetItemPosition);
+      // 初始化索引
       if (this.initialIndex < this.items.length && this.initialIndex >= 0) {
         this.activeIndex = this.initialIndex;
       }
@@ -401,6 +410,7 @@ export default {
   },
 
   beforeDestroy() {
+    // 移除尺寸更新监听
     if (this.$el) removeResizeListener(this.$el, this.resetItemPosition);
     this.pauseTimer();
   }

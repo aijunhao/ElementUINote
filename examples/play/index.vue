@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <el-carousel direction="horizontal" :loop="false">
+    <el-carousel direction="horizontal">
       <el-carousel-item v-for="item in 4" :key="item">
         <h3 class="small">{{ item }}</h3>
       </el-carousel-item>
